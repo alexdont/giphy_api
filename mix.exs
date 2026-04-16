@@ -2,7 +2,7 @@ defmodule GiphyApi.MixProject do
   use Mix.Project
 
   @version "0.1.0"
-  @source_url "https://github.com/BeamLabEU/giphy_api"
+  @source_url "https://github.com/alexdont/giphy_api"
 
   def project do
     [
