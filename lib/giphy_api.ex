@@ -15,6 +15,9 @@ defmodule GiphyApi do
       # Get trending GIFs
       {:ok, results} = GiphyApi.trending(limit: 20)
 
+      # Search with a per-call key (overrides app config)
+      {:ok, results} = GiphyApi.search("funny cat", api_key: "abc123", limit: 20)
+
   Results are returned as a list of `%GiphyApi.Gif{}` structs with
   pre-selected URLs for different sizes.
   """
@@ -26,6 +29,9 @@ defmodule GiphyApi do
 
   ## Options
 
+    * `:api_key` - Override the Giphy API key for this call. If omitted, falls back
+      to `Application.get_env(:giphy_api, :api_key)`. Useful for per-tenant configs
+      stored outside app env.
     * `:limit` - Max results (default: 20, max: 50)
     * `:offset` - Pagination offset (default: 0)
     * `:rating` - Content rating filter: "g", "pg", "pg-13", "r" (default: "pg-13")
@@ -41,6 +47,7 @@ defmodule GiphyApi do
 
   ## Options
 
+    * `:api_key` - Override the Giphy API key for this call.
     * `:limit` - Max results (default: 20, max: 50)
     * `:offset` - Pagination offset (default: 0)
     * `:rating` - Content rating filter (default: "pg-13")
@@ -52,9 +59,13 @@ defmodule GiphyApi do
 
   @doc """
   Get a single GIF by its Giphy ID.
+
+  ## Options
+
+    * `:api_key` - Override the Giphy API key for this call.
   """
-  @spec get(String.t()) :: {:ok, Gif.t()} | {:error, term()}
-  def get(id) do
-    Client.get(id)
+  @spec get(String.t(), keyword()) :: {:ok, Gif.t()} | {:error, term()}
+  def get(id, opts \\ []) do
+    Client.get(id, opts)
   end
 end

@@ -14,7 +14,7 @@ defmodule GiphyApi.Client do
       lang: Keyword.get(opts, :lang, "en")
     }
 
-    case get_request("#{@base_url}/search", params) do
+    case get_request("#{@base_url}/search", params, opts) do
       {:ok, %{"data" => data}} -> {:ok, Enum.map(data, &Gif.from_api/1)}
       {:error, _} = error -> error
     end
@@ -27,23 +27,23 @@ defmodule GiphyApi.Client do
       rating: Keyword.get(opts, :rating, "pg-13")
     }
 
-    case get_request("#{@base_url}/trending", params) do
+    case get_request("#{@base_url}/trending", params, opts) do
       {:ok, %{"data" => data}} -> {:ok, Enum.map(data, &Gif.from_api/1)}
       {:error, _} = error -> error
     end
   end
 
-  def get(id) do
-    case get_request("#{@base_url}/#{URI.encode(id)}", %{}) do
+  def get(id, opts \\ []) do
+    case get_request("#{@base_url}/#{URI.encode(id)}", %{}, opts) do
       {:ok, %{"data" => data}} -> {:ok, Gif.from_api(data)}
       {:error, _} = error -> error
     end
   end
 
-  defp get_request(url, params) do
-    api_key = Application.get_env(:giphy_api, :api_key)
+  defp get_request(url, params, opts) do
+    api_key = Keyword.get(opts, :api_key) || Application.get_env(:giphy_api, :api_key)
 
-    if is_nil(api_key) do
+    if is_nil(api_key) or api_key == "" do
       {:error, :missing_api_key}
     else
       params = Map.put(params, :api_key, api_key)
