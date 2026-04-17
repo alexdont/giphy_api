@@ -66,10 +66,19 @@ All functions return `{:ok, result}` or `{:error, reason}`. Results are `%GiphyA
 }
 ```
 
+### Per-call API key
+
+All functions accept an `:api_key` option that overrides the app config. Useful for per-tenant setups where the key is stored in a database rather than app env:
+
+```elixir
+{:ok, gifs} = GiphyApi.search("funny cat", api_key: "per-tenant-key", limit: 10)
+```
+
 ### Options
 
 | Option | Default | Description |
 |--------|---------|-------------|
+| `:api_key` | app config | Override Giphy API key for this call |
 | `:limit` | 20 | Max results (up to 50) |
 | `:offset` | 0 | Pagination offset |
 | `:rating` | `"pg-13"` | Content filter: `"g"`, `"pg"`, `"pg-13"`, `"r"` |
